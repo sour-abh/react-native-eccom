@@ -161,7 +161,7 @@ export default function Home() {
           ) : (
             <View className="grid grid-cols-2  sm:grid-cols-3 gap-4">
               {products.slice(0, 4).map((product) => (
-                <View key={product._id} className="">
+                <View key={product.id} className="">
                   <ProductCard product={product} />
                 </View>
               ))}
