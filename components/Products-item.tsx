@@ -19,7 +19,7 @@ const ProductCard = React.memo(({ product }: { product: Product }) => {
   const isLiked = true;
   return (
     <TouchableOpacity className="flex flex-col p-1.5 gap-3 rounded-xl justify-between max-w-md w-full h-full overflow-hidden bg-white shadow-xs border border-gray-100 mb-4">
-      <View className="rounded-xl w-full relative ">
+      <View className="rounded-xl  w-full relative ">
         <Link href={`/product/${product._id}`} asChild>
           <Image
             source={{ uri: product.images[0] }}
