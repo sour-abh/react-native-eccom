@@ -1,5 +1,6 @@
 import { COLORS } from "@/assets/constants";
 import { Product } from "@/assets/constants/types";
+import { useWhishlist } from "@/context/WhishListContext";
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import React from "react";
@@ -16,11 +17,12 @@ const ProductCard = React.memo(({ product }: { product: Product }) => {
       ((product?.comparePrice - product.price) / product?.comparePrice) * 100,
     );
   }
-  const isLiked = true;
+  const { isInWishlist, toggleWishlist } = useWhishlist();
+  const isLiked = isInWishlist(product.id);
   return (
     <TouchableOpacity className="flex flex-col p-1.5 gap-3 rounded-xl justify-between max-w-md w-full h-full overflow-hidden bg-white shadow-xs border border-gray-100 mb-4">
       <View className="rounded-xl  w-full relative ">
-        <Link href={`/product/${product._id}`} asChild>
+        <Link href={`/product/${product.id}`} asChild>
           <Image
             source={{ uri: product.images[0] }}
             className="h-40 w-full object-cover object-center rounded-xl bg-gray-100"
@@ -46,6 +48,7 @@ const ProductCard = React.memo(({ product }: { product: Product }) => {
             aria-label="add to favourites"
             onPress={(e) => {
               e.stopPropagation();
+              toggleWishlist(product);
             }}
           >
             <Ionicons
@@ -57,7 +60,7 @@ const ProductCard = React.memo(({ product }: { product: Product }) => {
         </View>
       </View>
       <View className="flex-1 px-1">
-        <Link href={`/product/${product._id}`} asChild>
+        <Link href={`/product/${product.id}`} asChild>
           <Text
             numberOfLines={2}
             className="text-sm font-semibold text-gray-800 mb-1 h-10"
@@ -69,10 +72,7 @@ const ProductCard = React.memo(({ product }: { product: Product }) => {
         <View className="flex-row items-center gap-1 mb-2">
           <Ionicons name="star" size={12} color="#FBBF24" />
           <Text className="text-xs font-bold text-gray-700">
-            {product.ratings.average}
-          </Text>
-          <Text className="text-xs text-gray-400">
-            ({product.ratings.count})
+            {product.ratings.toFixed(2)}
           </Text>
         </View>
 
