@@ -92,7 +92,7 @@ export const dummyProducts = [
     images: [
       "https://images.unsplash.com/photo-1559551409-dadc959f76b8?q=80&w=1000&auto=format&fit=crop",
     ],
-    sizes: ["S", "M", "L"],
+    sizes: ["S", "M", "L", "XL"],
     category: "Men",
     stock: 20,
     isFeatured: true,
@@ -1070,7 +1070,7 @@ export const dummyUser = {
 };
 
 export const dummyCart = {
-  i: "6984434e30be1ba0cf5d0fd4",
+  id: "6984434e30be1ba0cf5d0fd4",
   user: "69819801a872c913f84d13f4",
   items: [
     {
@@ -1082,7 +1082,13 @@ export const dummyCart = {
           "https://raw.githubusercontent.com/avinashdm/gs-images/main/forever/p_img14.png",
         ],
         stock: 95,
+        category: "Men",
+        ratings: 0,
+        isFeatured: false,
+        isActive: true,
       },
+      cartId: "6984434e30be1ba0cf5d0fd4",
+      productId: "6683d91f7f779795ecfa98eb",
       quantity: 1,
       price: 48,
       size: "M",
@@ -1097,13 +1103,20 @@ export const dummyCart = {
           "https://raw.githubusercontent.com/avinashdm/gs-images/main/forever/p_img8.png",
         ],
         stock: 100,
+        category: "Men",
+        ratings: 0,
+        isFeatured: false,
+        isActive: true,
       },
+      cartId: "6984434e30be1ba0cf5d0fd4",
+      productId: "6683d4f47f779795ecfa98af",
       quantity: 1,
       price: 68,
       size: "L",
       id: "698952f5ef9d0c746ef827c6",
     },
   ],
+
   totalAmount: 116,
   createdAt: "2026-02-05T07:14:22.429Z",
 };

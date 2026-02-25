@@ -1,5 +1,6 @@
 import { COLORS } from "@/assets/constants";
 import { HeaderProps } from "@/assets/constants/types";
+import { useCartContext } from "@/context/cartContext";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
@@ -14,7 +15,7 @@ export default function Header({
   showMenu,
 }: HeaderProps) {
   const router = useRouter();
-  const itemCount = { itemsCount: 10 };
+  const { totalItems } = useCartContext();
   return (
     <View className="flex flex-row items-center justify-between px-4 py-3 bg-white ">
       {/* left side */}
@@ -60,13 +61,11 @@ export default function Header({
           <TouchableOpacity onPress={() => router.push("/(tabs)/cart")}>
             <View className="relative">
               <Ionicons name="bag-outline" size={24} color={COLORS.primary} />
-              {itemCount?.itemsCount > 0 && (
+              {totalItems > 0 && (
                 <View
-                  className={`absolute -top-1 -right-1 ${itemCount?.itemsCount > 9 ? "w-5 bg-emerald-700" : "w-4 bg-accent"} rounded-full w-4 h-4 items-center justify-center`}
+                  className={`absolute -top-1 -right-1 ${totalItems > 9 ? "w-5 bg-emerald-700" : "w-4 bg-accent"} rounded-full w-4 h-4 items-center justify-center`}
                 >
-                  <Text className="text-white  text-[10px]">
-                    {itemCount?.itemsCount || 0}
-                  </Text>
+                  <Text className="text-white  text-[10px]">{totalItems}</Text>
                 </View>
               )}
             </View>
