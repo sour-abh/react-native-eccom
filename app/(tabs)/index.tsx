@@ -17,6 +17,7 @@ import { CATEGORIES, COLORS } from "@/assets/constants";
 import CategoriesItem from "@/components/Categories-item";
 import { Product } from "@/assets/constants/types";
 import ProductCard from "@/components/Products-item";
+import { TapGestureHandler } from "react-native-gesture-handler";
 
 export default function Home() {
   const { width } = useWindowDimensions();
@@ -26,7 +27,6 @@ export default function Home() {
   const Categories = [{ id: "all", name: "All", icon: "grid" }, ...CATEGORIES];
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   const fetchProducts = async () => {
     setProducts(dummyProducts);
@@ -34,7 +34,7 @@ export default function Home() {
   };
   useEffect(() => {
     fetchProducts();
-  }, [dummyProducts]);
+  }, []);
   return (
     <SafeAreaView className="flex-1" edges={["top"]}>
       <Header title="Forever" showLogo showSearch showCart showMenu />
@@ -64,7 +64,7 @@ export default function Home() {
               return (
                 <View
                   key={Banner.id}
-                  className="relative h-48 w-full bg-gray-300 overflow-hidden mr-2 rounded-lg    "
+                  className="relative h-48 w-full bg-gray-300 overflow-hidden  rounded-lg    "
                   style={{ width: width - 32 }}
                 >
                   <Image
@@ -159,12 +159,14 @@ export default function Home() {
               className="mt-20 justify-center flex items-center "
             />
           ) : (
-            <View className="grid grid-cols-2  sm:grid-cols-3 gap-4">
-              {products.slice(0, 4).map((product) => (
-                <View key={product.id} className="">
-                  <ProductCard product={product} />
-                </View>
-              ))}
+            <View className=" w-full  flex flex-wrap flex-row justify-between gap-2">
+              {products
+                .filter((product) => product.isFeatured === true)
+                .map((product, index) => (
+                  <View key={index} className="w-[49%] ">
+                    <ProductCard product={product} />
+                  </View>
+                ))}
             </View>
           )}
         </View>
