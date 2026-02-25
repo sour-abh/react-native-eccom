@@ -28,23 +28,17 @@ const ProductCard = React.memo(({ product }: { product: Product }) => {
             className="h-40 w-full object-cover object-center rounded-xl bg-gray-100"
           />
           {product.isFeatured ? (
-            <Link href={`/product/${product.id}`} asChild>
-              <View className="bg-black/30 backdrop-blur-md absolute top-2 left-2 px-2 py-1 rounded-lg">
-                <Text className="text-white text-[10px] font-bold">
-                  Featured
-                </Text>
-              </View>
-            </Link>
+            <View className="bg-black/30 backdrop-blur-md absolute top-2 left-2 px-2 py-1 rounded-lg">
+              <Text className="text-white text-[10px] font-bold">Featured</Text>
+            </View>
           ) : (
-            <Link href={`/product/${product.id}`} asChild>
-              <View className="bg-black/30 backdrop-blur-md absolute top-2 left-2 px-2 py-1 rounded-lg">
-                <Text className="text-white text-[10px] font-bold">
-                  {typeof product.category === "object"
-                    ? product.category?.name
-                    : product.category}
-                </Text>
-              </View>
-            </Link>
+            <View className="bg-black/30 backdrop-blur-md absolute top-2 left-2 px-2 py-1 rounded-lg">
+              <Text className="text-white text-[10px] font-bold">
+                {typeof product.category === "object"
+                  ? product.category?.name
+                  : product.category}
+              </Text>
+            </View>
           )}
 
           <View className="absolute top-2 right-2 flex flex-col gap-1">
@@ -65,14 +59,12 @@ const ProductCard = React.memo(({ product }: { product: Product }) => {
           </View>
         </View>
         <View className="flex-1 px-1">
-          <Link href={`/product/${product.id}`} asChild>
-            <Text
-              numberOfLines={2}
-              className="text-sm font-semibold text-gray-800 mb-1 h-10"
-            >
-              {product.name}
-            </Text>
-          </Link>
+          <Text
+            numberOfLines={2}
+            className="text-sm font-semibold text-gray-800 mb-1 h-10"
+          >
+            {product.name}
+          </Text>
 
           <View className="flex-row items-center gap-1 mb-2">
             <Ionicons name="star" size={12} color="#FBBF24" />

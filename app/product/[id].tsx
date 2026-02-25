@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   StyleSheet,
-  Dimensions,
+  useWindowDimensions,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -20,13 +20,13 @@ import { useCartContext } from "@/context/cartContext";
 import Toast from "react-native-toast-message";
 
 export default function ProductDetail() {
-  const { id } = useLocalSearchParams();
+  const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
-  const width = Dimensions.get("window").width;
+  const width = useWindowDimensions().width;
   const { isInWishlist, toggleWishlist } = useWhishlist();
   let isLiked = false;
   if (typeof id === "string") {
@@ -69,7 +69,7 @@ export default function ProductDetail() {
 
   if (!product) {
     return (
-      <View style={styles.centerContainer}>
+      <SafeAreaView style={styles.centerContainer}>
         <Text style={styles.errorText}>Product not found</Text>
         <TouchableOpacity
           onPress={() => router.back()}
@@ -77,7 +77,7 @@ export default function ProductDetail() {
         >
           <Text style={styles.backButtonText}>Go Back</Text>
         </TouchableOpacity>
-      </View>
+      </SafeAreaView>
     );
   }
 
@@ -110,7 +110,7 @@ export default function ProductDetail() {
             />
           ))}
         </ScrollView>
-        <View className=" absolute left-50 bottom-[60px] w-full">
+        <View className=" absolute left-0 bottom-[60px] w-full">
           <View className="flex-row justify-center w-full">
             {product.images.map((_, index) => (
               <View
@@ -154,10 +154,12 @@ export default function ProductDetail() {
         </View>
 
         <View style={styles.divider} />
-
-        <Text style={styles.sectionTitle}>Description</Text>
-        <Text style={styles.description}>{product.description}</Text>
-
+        {product?.description && (
+          <View>
+            <Text style={styles.sectionTitle}>Description</Text>
+            <Text style={styles.description}>{product.description}</Text>
+          </View>
+        )}
         {product.sizes && product.sizes.length > 0 && (
           <>
             <Text style={styles.sectionTitle}>Available Sizes</Text>

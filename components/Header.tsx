@@ -40,7 +40,9 @@ export default function Header({
           </View>
         ) : (
           title && (
-            <Text className="text-lg font-bold text-gray-900">{title}</Text>
+            <Text className="text-lg font-bold text-gray-900 text-center flex-1">
+              {title}
+            </Text>
           )
         )}
 
