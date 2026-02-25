@@ -32,7 +32,7 @@ export default function ProductDetail() {
   if (typeof id === "string") {
     isLiked = isInWishlist(id);
   }
-  const { totalItems } = useCartContext();
+  const { totalItems, cartItems } = useCartContext();
   const handleAddtoCart = () => {
     if (!selectedSize) {
       Toast.show({
@@ -50,6 +50,11 @@ export default function ProductDetail() {
       text2: `${product?.name} (${selectedSize}) has been added to your cart`,
     });
   };
+  const stock = cartItems.find((item) => item.product.id === product?.id)
+    ?.product.stock;
+  const quantity = cartItems.find(
+    (item) => item.product.id === product?.id,
+  )?.quantity;
 
   useEffect(() => {
     if (id) {
@@ -126,12 +131,14 @@ export default function ProductDetail() {
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => {
-          toggleWishlist(product);
-          Toast.show({
-            type: "success",
-            text1: "Wishlist Updated",
-            text2: isLiked ? "Removed from wishlist" : "Added to wishlist",
-          });
+          if (product) {
+            toggleWishlist(product);
+            Toast.show({
+              type: "success",
+              text1: "Wishlist Updated",
+              text2: isLiked ? "Removed from wishlist" : "Added to wishlist",
+            });
+          }
         }}
         style={styles.heartIcon}
       >
@@ -182,16 +189,59 @@ export default function ProductDetail() {
             </View>
           </>
         )}
-        <View className="flex-row justify-between items-center gap-2 w-full">
-          <TouchableOpacity
-            style={styles.addToCartButton}
-            onPress={() => {
-              handleAddtoCart();
-              // Add to cart logic would go here
-            }}
-          >
-            <Text style={styles.addToCartText}>Add to Cart</Text>
-          </TouchableOpacity>
+        <View className="flex-row justify-between items-center gap-2 w-full mb-5">
+          {cartItems.find((item) => item.product.id === product.id) ? (
+            <View className="flex flex-row justify-between items-center  w-[80%] gap-4">
+              <TouchableOpacity
+                disabled={(quantity ?? 0) <= 0}
+                className="items-center px-[18px] py-4 mt-2.5  bg-gray-700  rounded-2xl shadow-lg elevation-[2] border border-gray-800 relative "
+              >
+                <Ionicons
+                  name="remove"
+                  size={24}
+                  className="transition-transform duration-200"
+                  color={"#ffff"}
+                />
+              </TouchableOpacity>
+              <Text className="text-zinc-700  font-bold text-[24px] ">
+                {
+                  cartItems.find((item) => item.product.id === product.id)
+                    ?.quantity
+                }
+              </Text>
+              <TouchableOpacity
+                disabled={product.stock < (quantity ?? 0)}
+                className="items-center px-[18px] py-4 mt-2.5  bg-gray-700  rounded-2xl shadow-lg elevation-[2] border border-gray-800 relative "
+              >
+                <Ionicons
+                  name="add"
+                  size={24}
+                  className="transition-transform duration-200"
+                  color={"#ffff"}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity className="items-center px-[18px] py-4 mt-2.5  bg-gray-200  rounded-2xl shadow-lg elevation-[2] border border-gray-300 relative ">
+                <Ionicons
+                  name="trash"
+                  size={30}
+                  className="transition-transform duration-200 hover:rotate-12"
+                  color={COLORS.accent}
+                />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <TouchableOpacity
+              style={styles.addToCartButton}
+              onPress={() => {
+                if (product) {
+                  handleAddtoCart();
+                }
+                // Add to cart logic would go here
+              }}
+            >
+              <Text style={styles.addToCartText}>Add to Cart</Text>
+            </TouchableOpacity>
+          )}
           <TouchableOpacity
             onPress={() => router.push("/cart")}
             className="items-center px-[18px] py-4 mt-2.5  bg-gray-200 w-1/5 rounded-2xl shadow-lg elevation-[2] border border-gray-300 relative "

@@ -1,5 +1,6 @@
+import { dummyCart } from "@/assets/assets";
 import { Product } from "@/assets/constants/types";
-import { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 
 export type CartContextItem = {
   id: string;
@@ -8,6 +9,7 @@ export type CartContextItem = {
   quantity: number;
   product: Product;
   price: number;
+  size?: string;
 };
 export type CartContextType = {
   cartItems: CartContextItem[];
@@ -24,17 +26,20 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const fetchCart = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`/cart`);
-      const data = await response.json();
-      setCartItems(data.cartItems);
-      setTotalPrice(data.totalPrice);
-      setTotalItems(data.totalItems);
+      const data = dummyCart;
+      setCartItems(data.items);
+      setTotalPrice(data.totalAmount);
+      setTotalItems(data.items.length);
+      setIsLoading(false);
     } catch (error) {
       console.error("Error fetching cart:", error);
     } finally {
       setIsLoading(false);
     }
   };
+  React.useEffect(() => {
+    fetchCart();
+  }, []);
   return (
     <cartContext.Provider
       value={{ cartItems, totalPrice, totalItems, isLoading }}
