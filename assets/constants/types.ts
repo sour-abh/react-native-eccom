@@ -21,12 +21,11 @@ export interface User {
 export interface Product {
   id: string;
   name: string;
-  description: string;
+  description?: string;
   price: number;
   comparePrice?: number;
   images: string[];
   sizes?: string[];
-
   category:
     | {
         id: string;

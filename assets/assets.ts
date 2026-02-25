@@ -92,7 +92,7 @@ export const dummyProducts = [
     images: [
       "https://images.unsplash.com/photo-1559551409-dadc959f76b8?q=80&w=1000&auto=format&fit=crop",
     ],
-    sizes: ["S", "M", "L", "XL"],
+    sizes: ["S", "M", "L"],
     category: "Men",
     stock: 20,
     isFeatured: true,
@@ -149,7 +149,7 @@ export const dummyProducts = [
     sizes: ["S", "M", "L", "XL", "XXL"],
     category: "Men",
     stock: 100,
-    isFeatured: false,
+    isFeatured: true,
     isActive: true,
     createdAt: "2026-02-08T04:21:50.829Z",
   },
