@@ -82,7 +82,7 @@ export type HeaderProps = {
 };
 
 export interface Address {
-  _id: string;
+  id: string;
   type: "Home" | "Work" | "Other";
   street: string;
   city: string;
