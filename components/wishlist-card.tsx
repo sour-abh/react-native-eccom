@@ -18,6 +18,17 @@ const WishlistCard = (item: Product) => {
   const { isInWishlist, toggleWishlist } = useWhishlist();
   const { cartItems } = useCartContext();
   const isLiked = isInWishlist(item.id);
+  const getCategoryColorIndex = (category: string) => {
+    let hash = 0;
+    for (let i = 0; i < category.length; i++) {
+      hash = category.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return Math.abs(hash) % categoryColor.length;
+  };
+  const categoryName =
+    typeof item.category === "object" ? item.category?.name : item.category;
+  const colorIndex = getCategoryColorIndex(categoryName || "default");
+
   const categoryColor = [
     "bg-red-600",
     "bg-blue-700",
@@ -40,7 +51,9 @@ const WishlistCard = (item: Product) => {
     "bg-stone-500",
     "bg-neutral-500",
   ];
-  const quantity = cartItems.find((item) => item.id === item.id)?.quantity;
+  const quantity = cartItems.find(
+    (cartItem) => cartItem.id === item.id,
+  )?.quantity;
   return (
     <View className="px-2 relative">
       <Link href={`/product/${item.id}`} asChild>
@@ -54,7 +67,7 @@ const WishlistCard = (item: Product) => {
 
             <View className="flex flex-col gap-1">
               <View
-                className={`py-1 px-2 w-fit rounded-full ${categoryColor[Math.floor(Math.random() * categoryColor.length)]} `}
+                className={`py-1 px-2 w-fit rounded-full ${categoryColor[colorIndex]} `}
               >
                 <Text className="text-white  font-bold text-xs leading-tight">
                   {typeof item.category === "object"

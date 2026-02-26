@@ -51,7 +51,6 @@ const ProductCard = React.memo(({ product }: { product: Product }) => {
               aria-label="add to favourites"
               onPress={(e) => {
                 e.stopPropagation();
-                toggleWishlist(product);
                 if (product) {
                   toggleWishlist(product);
                   Toast.show({
@@ -149,7 +148,6 @@ const ProductCard = React.memo(({ product }: { product: Product }) => {
                 disabled={product.stock === 0}
                 onPress={() => {
                   if (product) {
-                    toggleWishlist(product);
                     Toast.show({
                       type: "success",
                       text1: "cart Updated",
