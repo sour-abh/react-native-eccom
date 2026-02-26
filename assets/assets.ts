@@ -1032,7 +1032,7 @@ export const dummyAddress = [
     state: "NY",
     zipCode: "100001",
     country: "USA",
-    isDefault: false,
+    isDefault: true,
     createdAt: "2026-02-06T08:50:12.856Z",
   },
   {
@@ -1158,7 +1158,7 @@ export const dummyOrders = [
     ],
     paymentMethod: "stripe",
     paymentStatus: "paid",
-    orderStatus: "placed",
+    orderStatus: "delivered",
     subtotal: 88,
     shippingCost: 2,
     tax: 0,

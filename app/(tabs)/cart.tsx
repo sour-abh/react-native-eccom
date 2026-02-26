@@ -73,7 +73,10 @@ export default function Cart() {
             </View>
 
             <View className="mt-4 ">
-              <TouchableOpacity className="rounded-xl py-2.5 w-full bg-zinc-900 text-white  font-semibold">
+              <TouchableOpacity
+                className="rounded-xl py-2.5 w-full bg-zinc-900 text-white  font-semibold"
+                onPress={() => router.push("/checkout")}
+              >
                 <Text
                   className="text-center text-white font-semibold"
                   style={{ fontFamily: "oxanium-bold" }}
