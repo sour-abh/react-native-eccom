@@ -1050,7 +1050,7 @@ export const dummyAddress = [
 ];
 
 export const dummyUser = {
-  i: "69819801a872c913f84d13f4",
+  id: "69819801a872c913f84d13f4",
   name: "John Doe",
   email: "john@example.com",
   firstName: "John",
@@ -1063,9 +1063,9 @@ export const dummyUser = {
     },
   ],
   clerkId: "user_396E235",
-  role: "admin",
+  role: "ADMIN",
   publicMetadata: {
-    role: "admin",
+    role: "ADMIN",
   },
 };
 

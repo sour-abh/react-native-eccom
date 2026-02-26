@@ -1,10 +1,12 @@
 import { COLORS } from "@/assets/constants";
 import { Product } from "@/assets/constants/types";
+import { useCartContext } from "@/context/cartContext";
 import { useWhishlist } from "@/context/WhishListContext";
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import React from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
+import Toast from "react-native-toast-message";
 
 const ProductCard = React.memo(({ product }: { product: Product }) => {
   let stockLabel = "In Stock";
@@ -17,8 +19,10 @@ const ProductCard = React.memo(({ product }: { product: Product }) => {
       ((product?.comparePrice - product.price) / product?.comparePrice) * 100,
     );
   }
+  const { cartItems } = useCartContext();
   const { isInWishlist, toggleWishlist } = useWhishlist();
   const isLiked = isInWishlist(product.id);
+  const quantity = cartItems.find((item) => item.id === product.id)?.quantity;
   return (
     <Link href={`/product/${product.id}`} asChild>
       <TouchableOpacity className="flex flex-col p-1.5 gap-3 rounded-xl justify-between max-w-md w-full overflow-hidden bg-white shadow-xs border border-gray-100 mb-1 h-[300px]">
@@ -48,6 +52,16 @@ const ProductCard = React.memo(({ product }: { product: Product }) => {
               onPress={(e) => {
                 e.stopPropagation();
                 toggleWishlist(product);
+                if (product) {
+                  toggleWishlist(product);
+                  Toast.show({
+                    type: "success",
+                    text1: "Wishlist Updated",
+                    text2: isLiked
+                      ? "Removed from wishlist"
+                      : "Added to wishlist",
+                  });
+                }
               }}
             >
               <Ionicons
@@ -91,13 +105,63 @@ const ProductCard = React.memo(({ product }: { product: Product }) => {
                 </Text>
               )}
             </View>
-
-            <TouchableOpacity
-              disabled={product.stock === 0}
-              className="bg-primary p-2 rounded-full"
-            >
-              <Ionicons name="bag-add-outline" size={20} color="white" />
-            </TouchableOpacity>
+            {cartItems.find((item) => item.product.id === product.id) ? (
+              <View className="flex flex-row justify-between items-center   gap-2">
+                <TouchableOpacity
+                  disabled={(quantity ?? 0) <= 0}
+                  className="bg-secondary p-2 rounded-full"
+                >
+                  <Ionicons
+                    name="remove"
+                    size={20}
+                    className="transition-transform duration-200"
+                    color={"#ffff"}
+                  />
+                </TouchableOpacity>
+                <Text className="text-zinc-700  font-bold text-[14px] ">
+                  {
+                    cartItems.find((item) => item.product.id === product.id)
+                      ?.quantity
+                  }
+                </Text>
+                <TouchableOpacity
+                  disabled={product.stock < (quantity ?? 0)}
+                  className="bg-secondary p-2 rounded-full"
+                >
+                  <Ionicons
+                    name="add"
+                    size={20}
+                    className="transition-transform duration-200"
+                    color={"#ffff"}
+                  />
+                </TouchableOpacity>
+                {/* <TouchableOpacity className="bg-primary p-1 rounded-full">
+                  <Ionicons
+                    name="trash"
+                    size={16}
+                    className="transition-transform duration-200 hover:rotate-12"
+                    color={COLORS.accent}
+                  />
+                </TouchableOpacity> */}
+              </View>
+            ) : (
+              <TouchableOpacity
+                disabled={product.stock === 0}
+                onPress={() => {
+                  if (product) {
+                    toggleWishlist(product);
+                    Toast.show({
+                      type: "success",
+                      text1: "cart Updated",
+                      text2: "Added to cart",
+                    });
+                  }
+                }}
+                className="bg-primary p-2 rounded-full"
+              >
+                <Ionicons name="bag-add-outline" size={20} color="white" />
+              </TouchableOpacity>
+            )}
           </View>
         </View>
 
