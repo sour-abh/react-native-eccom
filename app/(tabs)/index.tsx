@@ -180,8 +180,8 @@ export default function Home() {
             Subscribe to our newsletter and get 10% discount on all of your
             purchases
           </Text>
-          <TouchableOpacity className="bg-primary py-2 rounded-full text-center mt-2 w-4/5">
-            <Text className="text-white font-bold text-xs text-center">
+          <TouchableOpacity className="bg-gray-800 py-4 px-4 rounded-full text-center mt-2.5 w-4/5">
+            <Text className="text-white font-bold text-base text-center">
               Subscribe Now
             </Text>
           </TouchableOpacity>

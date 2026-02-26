@@ -194,7 +194,7 @@ export default function ProductDetail() {
             <View className="flex flex-row justify-between items-center  w-[80%] gap-4">
               <TouchableOpacity
                 disabled={(quantity ?? 0) <= 0}
-                className="items-center px-[18px] py-4 mt-2.5  bg-gray-700  rounded-2xl shadow-lg elevation-[2] border border-gray-800 relative "
+                className="items-center px-3 py-3 mt-2.5  bg-gray-700  rounded-2xl shadow-lg elevation-[2] border border-gray-800 relative "
               >
                 <Ionicons
                   name="remove"
@@ -211,7 +211,7 @@ export default function ProductDetail() {
               </Text>
               <TouchableOpacity
                 disabled={product.stock < (quantity ?? 0)}
-                className="items-center px-[18px] py-4 mt-2.5  bg-gray-700  rounded-2xl shadow-lg elevation-[2] border border-gray-800 relative "
+                className="items-center px-3 py-3 mt-2.5  bg-gray-700  rounded-2xl shadow-lg elevation-[2] border border-gray-800 relative "
               >
                 <Ionicons
                   name="add"
@@ -220,7 +220,7 @@ export default function ProductDetail() {
                   color={"#ffff"}
                 />
               </TouchableOpacity>
-              <TouchableOpacity className="items-center px-[18px] py-4 mt-2.5  bg-gray-200  rounded-2xl shadow-lg elevation-[2] border border-gray-300 relative ">
+              <TouchableOpacity className="items-center px-3 py-3 mt-2.5  bg-gray-200  rounded-2xl shadow-lg elevation-[2] border border-gray-300 relative ">
                 <Ionicons
                   name="trash"
                   size={30}
@@ -244,7 +244,7 @@ export default function ProductDetail() {
           )}
           <TouchableOpacity
             onPress={() => router.push("/cart")}
-            className="items-center px-[18px] py-4 mt-2.5  bg-gray-200 w-1/5 rounded-2xl shadow-lg elevation-[2] border border-gray-300 relative "
+            className="items-center px-3 py-3 mt-2.5  bg-gray-200 w-1/5 rounded-2xl shadow-lg elevation-[2] border border-gray-300 relative "
           >
             <Feather name="shopping-cart" size={30} color={"#000"} />
             {totalItems > 0 && (
@@ -360,7 +360,7 @@ const styles = StyleSheet.create({
   addToCartButton: {
     width: "80%",
     backgroundColor: COLORS.primary,
-    padding: 18,
+    padding: 15,
     borderRadius: 15,
     alignItems: "center",
     marginTop: 10,
