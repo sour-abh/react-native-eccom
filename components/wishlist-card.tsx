@@ -18,16 +18,6 @@ const WishlistCard = (item: Product) => {
   const { isInWishlist, toggleWishlist } = useWhishlist();
   const { cartItems } = useCartContext();
   const isLiked = isInWishlist(item.id);
-  const getCategoryColorIndex = (category: string) => {
-    let hash = 0;
-    for (let i = 0; i < category.length; i++) {
-      hash = category.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    return Math.abs(hash) % categoryColor.length;
-  };
-  const categoryName =
-    typeof item.category === "object" ? item.category?.name : item.category;
-  const colorIndex = getCategoryColorIndex(categoryName || "default");
 
   const categoryColor = [
     "bg-red-600",
@@ -51,6 +41,16 @@ const WishlistCard = (item: Product) => {
     "bg-stone-500",
     "bg-neutral-500",
   ];
+  const getCategoryColorIndex = (category: string) => {
+    let hash = 0;
+    for (let i = 0; i < category.length; i++) {
+      hash = category.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return Math.abs(hash) % categoryColor.length;
+  };
+  const categoryName =
+    typeof item.category === "object" ? item.category?.name : item.category;
+  const colorIndex = getCategoryColorIndex(categoryName || "default");
   const quantity = cartItems.find(
     (cartItem) => cartItem.id === item.id,
   )?.quantity;

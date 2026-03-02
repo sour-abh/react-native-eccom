@@ -13,7 +13,7 @@ export default function Favourite() {
   return (
     <SafeAreaView className="flex-1 bg-surface" edges={["top"]}>
       <Header title="WishList" showMenu showCart />
-      {wishlist.length > 0 ? (
+      {wishlist && wishlist.length > 0 ? (
         <ScrollView showsVerticalScrollIndicator={false} className="gap-2">
           <View className="mt-4 gap-2">
             {wishlist.map((item: Product) => (
