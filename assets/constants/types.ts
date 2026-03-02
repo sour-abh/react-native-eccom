@@ -103,7 +103,7 @@ export interface OrderItem {
 }
 
 export interface Order {
-  _id: string;
+  id: string;
   user: User | string;
   orderNumber: string;
   items: OrderItem[];

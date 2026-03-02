@@ -114,7 +114,7 @@ export default function Checkout() {
               onPress={() => setPaymentMethod("STRIPE")}
               className={
                 paymentMethod === "STRIPE"
-                  ? "bg-white border-2 border-primary p-4 rounded-xl mb-6 shadow-xl relative w-[48%]  "
+                  ? "bg-white border-2 border-primary p-4 rounded-xl mb-6 shadow-xl relative w-[48%]   "
                   : "bg-white border-2 border-transparent p-4 rounded-xl mb-6 shadow-lg relative w-[48%] "
               }
             >
@@ -144,12 +144,8 @@ export default function Checkout() {
             >
               <View className="flex flex-col items-start gap-2 ">
                 <Ionicons name="wallet" size={24} color={COLORS.primary} />
-                <Text className="text-base font-bold text-gray-900">
-                  CASH On Delivery
-                </Text>
-                <Text className="text-secondary text-xs">
-                  Pay with Cash on delivery
-                </Text>
+                <Text className="text-base font-bold text-gray-900">CASH</Text>
+                <Text className="text-secondary text-xs">Cash on delivery</Text>
               </View>
               {paymentMethod === "CASH" && (
                 <Ionicons

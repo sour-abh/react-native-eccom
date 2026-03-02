@@ -459,40 +459,7 @@ export const dummyProducts = [
     isActive: true,
     createdAt: "2026-02-08T04:21:50.830Z",
   },
-  {
-    ratings: 0,
-    id: "6683d91f7f779795ecfa98eb",
-    name: "Men Round Neck Pure Cotton T-shirt",
-    description:
-      "A lightweight, usually knitted, pullover shirt, close-fitting and with a round neckline and short sleeves, worn as an undershirt or outer garment.",
-    price: 48,
-    images: [
-      "https://raw.githubusercontent.com/avinashdm/gs-images/main/forever/p_img14.png",
-    ],
-    sizes: ["S", "M", "L", "XL", "XXL"],
-    category: "Men",
-    stock: 95,
-    isFeatured: false,
-    isActive: true,
-    createdAt: "2026-02-08T04:21:50.830Z",
-  },
-  {
-    ratings: 0,
-    id: "6683db0d7f779795ecfa9907",
-    name: "Men Slim Fit Relaxed Denim Jacket",
-    description:
-      "A lightweight, usually knitted, pullover shirt, close-fitting and with a round neckline and short sleeves, worn as an undershirt or outer garment.",
-    price: 84,
-    images: [
-      "https://raw.githubusercontent.com/avinashdm/gs-images/main/forever/p_img52.png",
-    ],
-    sizes: ["S", "M", "L", "XL", "XXL"],
-    category: "Men",
-    stock: 61,
-    isFeatured: true,
-    isActive: true,
-    createdAt: "2026-02-08T04:21:50.830Z",
-  },
+
   {
     ratings: 0,
     id: "6683d42b7f779795ecfa98a5",
@@ -1093,27 +1060,6 @@ export const dummyCart = {
       price: 48,
       size: "M",
       id: "698952e1ef9d0c746ef827b9",
-    },
-    {
-      product: {
-        id: "6683d4f47f779795ecfa98af",
-        name: "Men Round Neck Pure Cotton T-shirt",
-        price: 68,
-        images: [
-          "https://raw.githubusercontent.com/avinashdm/gs-images/main/forever/p_img8.png",
-        ],
-        stock: 100,
-        category: "Men",
-        ratings: 0,
-        isFeatured: false,
-        isActive: true,
-      },
-      cartId: "6984434e30be1ba0cf5d0fd4",
-      productId: "6683d4f47f779795ecfa98af",
-      quantity: 1,
-      price: 68,
-      size: "L",
-      id: "698952f5ef9d0c746ef827c6",
     },
   ],
 
