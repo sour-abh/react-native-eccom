@@ -1,4 +1,3 @@
-import { CartContextItem } from "@/context/cartContext";
 import { Ionicons } from "@expo/vector-icons";
 import {
   Image,
@@ -10,14 +9,27 @@ import {
 import { Link } from "expo-router";
 import { COLORS } from "@/assets/constants";
 import { Product } from "@/assets/constants/types";
-import { useCartContext } from "@/context/cartContext";
-import { useWhishlist } from "@/context/WhishListContext";
+import { useCart } from "@/hooks/useCart";
+import { useWishListStore } from "@/store/wishlist.store";
+import Toast from "react-native-toast-message";
+import { useAddToCart } from "@/hooks/useAddToCart";
 
 const WishlistCard = (item: Product) => {
   const width = useWindowDimensions().width;
-  const { isInWishlist, toggleWishlist } = useWhishlist();
-  const { cartItems } = useCartContext();
+  const { isInWishlist, toggleWishlist } = useWishListStore();
+  const { data } = useCart();
+  const cartItems = data?.cartItems || [];
   const isLiked = isInWishlist(item.id);
+  const { mutateAsync: addToCart } = useAddToCart();
+  const handleAddtoCart = async (product: Product) => {
+    const response = await addToCart(product);
+    if (response) {
+      Toast.show({
+        type: "success",
+        text1: "Added to Cart",
+      });
+    }
+  };
 
   const categoryColor = [
     "bg-red-600",
@@ -52,7 +64,7 @@ const WishlistCard = (item: Product) => {
     typeof item.category === "object" ? item.category?.name : item.category;
   const colorIndex = getCategoryColorIndex(categoryName || "default");
   const quantity = cartItems.find(
-    (cartItem) => cartItem.id === item.id,
+    (cartItem: any) => cartItem.id === item.id,
   )?.quantity;
   return (
     <View className="px-2 relative">
@@ -99,7 +111,9 @@ const WishlistCard = (item: Product) => {
               </Text>
             </View>
             <View>
-              {cartItems.find((cartItem) => cartItem.product.id === item.id) ? (
+              {cartItems.find(
+                (cartItem: any) => cartItem.product.id === item.id,
+              ) ? (
                 <View className="flex flex-row justify-between items-center   gap-2">
                   <TouchableOpacity
                     disabled={(quantity ?? 0) <= 0}
@@ -146,6 +160,7 @@ const WishlistCard = (item: Product) => {
                   </Text> */}
                   <TouchableOpacity
                     disabled={item.stock === 0}
+                    onPress={() => handleAddtoCart(item)}
                     className="bg-primary p-2 rounded-full items-center justify-center"
                   >
                     <Ionicons name="bag-add-outline" size={20} color="white" />

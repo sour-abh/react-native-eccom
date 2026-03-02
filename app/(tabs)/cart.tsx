@@ -1,15 +1,19 @@
 import { View, Text, ActivityIndicator, TouchableOpacity } from "react-native";
 import React, { useMemo } from "react";
-import { useCartContext } from "@/context/cartContext";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "@/components/Header";
 import { COLORS } from "@/assets/constants";
 import { useRouter } from "expo-router";
 import { ScrollView } from "react-native-gesture-handler";
 import CartItemCard from "@/components/cartItemCard";
+import { useCart } from "@/hooks/useCart";
 export default function Cart() {
   const router = useRouter();
-  const { totalItems, totalPrice, cartItems, isLoading } = useCartContext();
+  const { data } = useCart();
+  const cartItems = data?.cartItems || [];
+  const totalItems = cartItems.length;
+  const totalPrice = data?.totalPrice || 0;
+  const isLoading = data?.isLoading || false;
   const shipping = 10;
   const tax = 5;
   const total = useMemo(() => {
@@ -37,7 +41,7 @@ export default function Cart() {
             className="flex-1  mt-4"
             showsVerticalScrollIndicator={false}
           >
-            {cartItems.map((item) => (
+            {cartItems.map((item: any) => (
               <CartItemCard key={item.id} {...item} />
             ))}
           </ScrollView>
