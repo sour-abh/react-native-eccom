@@ -1,19 +1,19 @@
 import { Stack } from "expo-router";
 import "../global.css";
-import { CartProvider } from "@/context/cartContext";
-import { WhishlistProvider } from "@/context/WhishListContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Toast from "react-native-toast-message";
 
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
+
 export default function RootLayout() {
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <CartProvider>
-        <WhishlistProvider>
-          <Stack screenOptions={{ headerShown: false }} />
-        </WhishlistProvider>
-      </CartProvider>
-      <Toast />
-    </GestureHandlerRootView>
+    <QueryClientProvider client={queryClient}>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <Stack screenOptions={{ headerShown: false }} />
+        <Toast />
+      </GestureHandlerRootView>
+    </QueryClientProvider>
   );
 }

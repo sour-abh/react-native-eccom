@@ -1,22 +1,21 @@
 import { View, Text } from "react-native";
 import React from "react";
-import { useWhishlist } from "@/context/WhishListContext";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ScrollView } from "react-native-gesture-handler";
 import Header from "@/components/Header";
 import WishlistCard from "@/components/wishlist-card";
 import { Product } from "@/assets/constants/types";
-
+import { useWishListStore } from "@/store/wishlist.store";
 export default function Favourite() {
-  const { wishlist } = useWhishlist();
+  const { wishList } = useWishListStore.getState();
 
   return (
     <SafeAreaView className="flex-1 bg-surface" edges={["top"]}>
       <Header title="WishList" showMenu showCart />
-      {wishlist && wishlist.length > 0 ? (
+      {wishList && wishList.length > 0 ? (
         <ScrollView showsVerticalScrollIndicator={false} className="gap-2">
           <View className="mt-4 gap-2">
-            {wishlist.map((item: Product) => (
+            {wishList.map((item: Product) => (
               <WishlistCard key={item.id} {...item} />
             ))}
           </View>

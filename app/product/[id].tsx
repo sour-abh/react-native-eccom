@@ -15,10 +15,12 @@ import { Product } from "@/assets/constants/types";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { COLORS } from "@/assets/constants";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useWhishlist } from "@/context/WhishListContext";
-import { useCartContext } from "@/context/cartContext";
 import Toast from "react-native-toast-message";
-
+import { useWishListStore } from "@/store/wishlist.store";
+import { useCart } from "@/hooks/useCart";
+import CartResource from "@/api/CartResource";
+import { useAddToCart } from "@/hooks/useAddToCart";
+import { useUpdateCartItems } from "@/hooks/useUpdateCartItems";
 export default function ProductDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
@@ -27,38 +29,42 @@ export default function ProductDetail() {
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const width = useWindowDimensions().width;
-  const { isInWishlist, toggleWishlist } = useWhishlist();
+  const { isInWishlist, toggleWishlist } = useWishListStore.getState();
   let isLiked = false;
-  if (typeof id === "string") {
-    isLiked = isInWishlist(id);
-  }
-  const { totalItems, cartItems } = useCartContext();
-  const handleAddtoCart = () => {
-    if (!selectedSize) {
-      Toast.show({
-        type: "info",
-        text1: "Size not selected",
-        text2: "Please select a size",
-      });
-      return;
-    }
 
-    // Add to cart logic
-    Toast.show({
-      type: "success",
-      text1: "Added to Cart",
-      text2: `${product?.name} (${selectedSize}) has been added to your cart`,
-    });
+  isLiked = isInWishlist(id);
+
+  const { data } = useCart();
+  const cartItems = data?.cartItems || [];
+  const totalItems = cartItems?.totalItems || "0";
+
+  const { mutateAsync: addToCart } = useAddToCart();
+  const { mutateAsync: updateCartItems } = useUpdateCartItems();
+  const handleAddtoCart = async (product: Product) => {
+    const response = await addToCart(product);
+    if (response) {
+      Toast.show({
+        type: "success",
+        text1: "Added to Cart",
+      });
+    }
   };
-  const stock = cartItems.find((item) => item.product.id === product?.id)
-    ?.product.stock;
+  const handleUpdateCartItems = async (id: string, item: any) => {
+    const response = await updateCartItems({ id, item });
+    if (response) {
+      Toast.show({
+        type: "success",
+        text1: "Updated Cart",
+      });
+    }
+  };
   const quantity = cartItems.find(
-    (item) => item.product.id === product?.id,
+    (item: any) => item.product.id === product?.id,
   )?.quantity;
 
   useEffect(() => {
     if (id) {
-      const foundProduct = dummyProducts.find((p) => p.id === id);
+      const foundProduct = cartItems.find((p: any) => p.id === id);
       setProduct(foundProduct ?? null);
       setLoading(false);
     }
@@ -190,10 +196,13 @@ export default function ProductDetail() {
           </>
         )}
         <View className="flex-row justify-between items-center gap-2 w-full mb-5">
-          {cartItems.find((item) => item.product.id === product.id) ? (
+          {cartItems.find((item: any) => item.product.id === product.id) ? (
             <View className="flex flex-row justify-between items-center  w-[80%] gap-4">
               <TouchableOpacity
                 disabled={(quantity ?? 0) <= 0}
+                onPress={() =>
+                  handleUpdateCartItems(product.id, { quantity: quantity - 1 })
+                }
                 className="items-center px-3 py-3 mt-2.5  bg-gray-700  rounded-2xl shadow-lg elevation-[2] border border-gray-800 relative "
               >
                 <Ionicons
@@ -205,12 +214,13 @@ export default function ProductDetail() {
               </TouchableOpacity>
               <Text className="text-zinc-700  font-bold text-[24px] ">
                 {
-                  cartItems.find((item) => item.product.id === product.id)
+                  cartItems.find((item: any) => item.product.id === product.id)
                     ?.quantity
                 }
               </Text>
               <TouchableOpacity
                 disabled={product.stock < (quantity ?? 0)}
+                onPress={() => handleAddtoCart(product)}
                 className="items-center px-3 py-3 mt-2.5  bg-gray-700  rounded-2xl shadow-lg elevation-[2] border border-gray-800 relative "
               >
                 <Ionicons
@@ -234,7 +244,7 @@ export default function ProductDetail() {
               style={styles.addToCartButton}
               onPress={() => {
                 if (product) {
-                  handleAddtoCart();
+                  handleAddtoCart(product);
                 }
                 // Add to cart logic would go here
               }}

@@ -1,6 +1,5 @@
 import { View, Text, ActivityIndicator, TouchableOpacity } from "react-native";
 import React, { useEffect, useMemo, useState } from "react";
-import { useCartContext } from "@/context/cartContext";
 import { useRouter } from "expo-router";
 import { dummyAddress } from "@/assets/assets";
 import { Address } from "@/assets/constants/types";
@@ -10,10 +9,12 @@ import { COLORS } from "@/assets/constants";
 import Header from "@/components/Header";
 import { ScrollView } from "react-native-gesture-handler";
 import { Ionicons } from "@expo/vector-icons";
+import { useCart } from "@/hooks/useCart";
 
 export default function Checkout() {
-  const { totalPrice } = useCartContext();
   const router = useRouter();
+  const { data } = useCart();
+  const totalPrice = data?.totalPrice || 0;
   const [loading, setLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(true);
   const [Address, setAddress] = useState<Address | null>(null);

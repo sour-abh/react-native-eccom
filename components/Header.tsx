@@ -1,6 +1,6 @@
 import { COLORS } from "@/assets/constants";
 import { HeaderProps } from "@/assets/constants/types";
-import { useCartContext } from "@/context/cartContext";
+import { useCart } from "@/hooks/useCart";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
@@ -15,7 +15,8 @@ export default function Header({
   showMenu,
 }: HeaderProps) {
   const router = useRouter();
-  const { totalItems } = useCartContext();
+  const { data } = useCart();
+  const totalItems = data?.cartItems?.totalItems || "0";
   return (
     <View className="flex flex-row items-center justify-between px-4 py-3 bg-white ">
       {/* left side */}
