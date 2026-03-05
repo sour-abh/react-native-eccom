@@ -1,12 +1,17 @@
 import React, { useState } from "react";
-import { ScrollView, Text, TextInput, TouchableOpacity, View, Switch, Image, ActivityIndicator, Modal, FlatList, TouchableWithoutFeedback, Platform, } from "react-native";
+import { ScrollView, Text, TextInput, TouchableOpacity, View, Switch, Image, ActivityIndicator, Modal, FlatList, TouchableWithoutFeedback } from "react-native";
 import Toast from 'react-native-toast-message';
-import { COLORS } from "@/constants";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
-import { CATEGORIES } from "@/constants";
+import { CATEGORIES ,COLORS} from "@/assets/constants";
+import { useAuthStore } from "@/store/auth.store";
+import { SafeAreaView } from "react-native-safe-area-context";
+import Header from "@/components/Header";
+import ProductResource from "@/api/ProductResource";
 
 export default function AddProduct() {
+
+    const {user}=useAuthStore.getState()
 
     const [submitting, setSubmitting] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
@@ -38,15 +43,57 @@ export default function AddProduct() {
 
     // Add Product
     const handleSubmit = async () => {
+        Toast.show({
+            type:'success',
+            text1:'Handler clicked'
+        })
+        setSubmitting(true)
+        try{
+            
         if (!name || !price || !category || sizes.length < 1) {
             Toast.show({
                 type: 'error',
                 text1: 'Missing Fields',
                 text2: 'Please fill in all required fields'
             });
+            setSubmitting(false)
             return;
         }
+    const res=ProductResource.createProducts({name,description,price,stock,sizes,isFeatured,images})
+    if(res===200|| res===201){
+        Toast.show({
+            type:'success',
+            text1:'Product added successfully',
+            text2:'Product added successfully'
+        })
+        setSubmitting(false)
+    }
+
+    }
+        catch (error){
+            Toast.show({
+                type:'error',
+                text1:'error in creating product',
+                text2:`${error}`
+            })
+            setSubmitting(false)
+
+
+
+        }
+
     };
+        if(user.type!=='ADMIN'){
+    return(<SafeAreaView className="flex-1 bg-syrface items-center">
+        <Header showBack title="Add Product" />
+        <View className="flex-1 items-center justify-center">
+            <Text className="text-3xl text-bold text-gray-800">
+                Admin Access only
+            </Text>
+        </View>
+    
+    </SafeAreaView>)
+    }
 
     return (
         <ScrollView className="flex-1 bg-surface p-4">
@@ -206,9 +253,9 @@ export default function AddProduct() {
 
                 {/* SUBMIT */}
                 <TouchableOpacity
-                    onPress={handleSubmit}
+                    onPress={()=>handleSubmit()}
                     disabled={submitting}
-                    className={`bg-primary p-4 rounded-xl items-center ${submitting ? "opacity-70" : ""
+                    className={`bg-primary p-4 rounded-xl items-center ${ submitting ? "opacity-70" : ""
                         }`}
                 >
                     {submitting ? (

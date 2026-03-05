@@ -1,9 +1,15 @@
 import AuthResource from "@/api/AuthResource";
+import Header from "@/components/Header";
+import { useAuthStore } from "@/store/auth.store";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 
 const Register = () => {
+  const router=useRouter()
+  const  {setUser,setTokens}=useAuthStore()
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [firstName, setFirstName] = useState<string>("");
@@ -12,7 +18,7 @@ const Register = () => {
     email: "",
     password: "",
   });
-  const handleLogin = () => {
+  const handleRegister = async () => {
     if (
       email.length === 0 ||
       password.length === 0 ||
@@ -26,62 +32,73 @@ const Register = () => {
       });
       return;
     }
-    const res = AuthResource.register({
-      email: email,
-      password: password,
-      firstName: firstName || "",
-      lastName: lastName || "",
-    });
-    if (res.status === 200 || res.status === 201) {
+    try {
+      const res = await AuthResource.register({
+        email: email,
+        password: password,
+        firstName: firstName || "",
+        lastName: lastName || "",
+      });
+      if (res.status === 200 || res.status === 201) {
+        const {accessToken,refreshToken,user}=res.data
+        setUser(user)
+        setTokens(accessToken,refreshToken)
+        Toast.show({
+          type: "success",
+          text1: "Registeration Success",
+          text2: "You have successfully logged in",
+        });
+        router.push('/')
+      }
+    } catch (err) {
+      setError({email:`${err}`,password:`${err}`})
       Toast.show({
-        type: "success",
-        text1: "Login Success",
-        text2: "You have successfully logged in",
+        type: "error",
+        text1: "Register Failed",
+        text2: `${err}`,
       });
     }
   };
   return (
-    <View className="flex-1 px-4 items-center">
-      <View>
-        <Text>Email</Text>
-        <TextInput placeholder="Email" value={email} onChangeText={setEmail} />
+    
+    <SafeAreaView className="flex-1 bg-white px-4">
+      <Header showBack/>
+      <Text className="font-bold text-gray-700 text-3xl leading-tight  text-center my-20">Step Into the Future OF Shopping</Text>
+    <View className=" px-4  ">
+      <View className="gap-2 items-start my-4" >
+        <Text className="font-medium leading-6 text-lg ">Email or UserName</Text>
+        <TextInput placeholder="Email" value={email} onChangeText={setEmail}  className="w-full bg-surface border border-gray-200 rounded-lg"/>
         {error.email.length > 0 && (
           <Text className="text-red-500">{error.email}</Text>
         )}
       </View>
-      <View>
-        <Text>Password</Text>
+            <View className="gap-2 items-start my-4" >
+        <Text className="font-medium leading-6 text-lg ">First Name</Text>
+        <TextInput placeholder="John" value={firstName} onChangeText={setFirstName}  className="w-full bg-surface border border-gray-200 rounded-lg"/>
+
+      </View>
+            <View className="gap-2 items-start my-4" >
+        <Text className="font-medium leading-6 text-lg ">Last Name</Text>
+        <TextInput placeholder="Doe" value={lastName} onChangeText={setLastName}  className="w-full bg-surface border border-gray-200 rounded-lg"/>
+
+      </View>
+      <View className=" gap-2 items-start my-4 ">
+        <Text className="font-medium leading-6 text-lg ">Password</Text>
         <TextInput
           placeholder="Password"
           value={password}
           onChangeText={setPassword}
+          secureTextEntry={true}
+          className="w-full bg-surface border border-gray-200 rounded-lg"
         />
         {error.password.length > 0 && (
           <Text className="text-red-500">{error.password}</Text>
         )}
       </View>
-
-      <View>
-        <Text>FirstName</Text>
-        <TextInput
-          placeholder="FirstName"
-          value={firstName}
-          onChangeText={setFirstName}
-        />
-      </View>
-
-      <View>
-        <Text>LastName</Text>
-        <TextInput
-          placeholder="LastName"
-          value={lastName}
-          onChangeText={setLastName}
-        />
-      </View>
-      <TouchableOpacity onPress={() => handleLogin()}>
-        Register
-      </TouchableOpacity>
+      <TouchableOpacity onPress={handleRegister} className="w-full rounded-xl bg-gray-800  py-3 mt-5 " ><Text className="text-white text-xl text-center">Register</Text></TouchableOpacity>
     </View>
+    <View className="justify-center flex-row gap-1 mt-5 items-center"> <Text className="text-sm text-secondary">Already have an account ? </Text><TouchableOpacity onPress={()=>router.push("/auth/login")}><Text className="text-base font-semibold mx-1">Login</Text></TouchableOpacity></View>
+    </SafeAreaView>
   );
 };
 export default Register;

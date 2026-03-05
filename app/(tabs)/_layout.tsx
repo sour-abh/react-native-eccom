@@ -1,27 +1,24 @@
-import { View, Text } from "react-native";
+import { View } from "react-native";
 import React from "react";
 import { Tabs } from "expo-router";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { COLORS } from "@/assets/constants";
-import { useCart } from "@/hooks/useCart";
 
 export default function TabLayout() {
-  const color = COLORS.primary;
-  const { data } = useCart();
-  const cartItems = data?.cartItems || [];
+
+  // const { data } = useCart();
+  const cartItems = [];
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: COLORS.primary,
         tabBarInactiveTintColor: "#708d81",
-        tabBarShowLabel: false,
+        
         tabBarStyle: {
-          backgroundColor: "#fff",
-          borderTopWidth: 1,
-          borderTopColor: "#F0F0F0",
-          height: 56,
-          paddingTop: 8,
+          backgroundColor: "#ffff",
+
+          
         },
       }}
     >

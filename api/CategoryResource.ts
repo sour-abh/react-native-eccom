@@ -30,7 +30,7 @@ const CategoryResource: CategoryResourceType = {
     search?: string;
     isActive?: boolean;
   }) => {
-    return instance.get("/categories", { params });
+    return instance.get("/categories/all", { params });
   },
   getCategoryById: (id: string) => {
     return instance.get(`/categories/${id}`);

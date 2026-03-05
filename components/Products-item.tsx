@@ -1,58 +1,64 @@
-import CartResource from "@/api/CartResource";
 import { COLORS } from "@/assets/constants";
-import { CartItem, Product } from "@/assets/constants/types";
+import {  Product } from "@/assets/constants/types";
 import { useAddToCart } from "@/hooks/useAddToCart";
-import { useCart } from "@/hooks/useCart";
 import { useUpdateCartItems } from "@/hooks/useUpdateCartItems";
 import { useWishListStore } from "@/store/wishlist.store";
 
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
-import React from "react";
+import React, { useMemo } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import Toast from "react-native-toast-message";
 
-const ProductCard = React.memo(({ product }: { product: Product }) => {
-  let stockLabel = "In Stock";
-  let discount = 0;
-  const { mutateAsync: addToCart } = useAddToCart();
-  const { mutateAsync: updateCartItems } = useUpdateCartItems();
-  const handleAddtoCart = async (product: Product) => {
-    const response = await addToCart(product);
-    if (response) {
-      Toast.show({
-        type: "success",
-        text1: "Added to Cart",
-      });
-    }
-  };
-  const handleUpdateCartItems = async (id: string, item: any) => {
-    const response = await updateCartItems({ id, item });
-    if (response) {
-      Toast.show({
-        type: "success",
-        text1: "Updated Cart",
-      });
-    }
-  };
+interface ProductCardProps {
+  product: Product;
+  cartData?: any;
+}
 
-  if (product.stock === 0) stockLabel = "Out of Stock";
-  else if (product.stock < 5) stockLabel = "Low Stock";
+const ProductCard = React.memo(
+  ({ product, cartData }: ProductCardProps) => {
+    let stockLabel = "In Stock";
+    let discount = 0;
+    const { mutateAsync: addToCart } = useAddToCart();
+    const { mutateAsync: updateCartItems } = useUpdateCartItems();
+    const handleAddtoCart = async (product: Product) => {
+      const response = await addToCart(product);
+      if (response) {
+        Toast.show({
+          type: "success",
+          text1: "Added to Cart",
+        });
+      }
+    };
+    const handleUpdateCartItems = async (id: string, item: any) => {
+      const response = await updateCartItems({ id, item });
+      if (response) {
+        Toast.show({
+          type: "success",
+          text1: "Updated Cart",
+        });
+      }
+    };
 
-  if (product?.comparePrice) {
-    discount = Math.round(
-      ((product?.comparePrice - product.price) / product?.comparePrice) * 100,
+    if (product.stock === 0) stockLabel = "Out of Stock";
+    else if (product.stock < 5) stockLabel = "Low Stock";
+
+    if (product?.comparePrice) {
+      discount = Math.round(
+        ((product?.comparePrice - product.price) / product?.comparePrice) * 100,
+      );
+    }
+    
+    const cartItems = useMemo(() => cartData?.cartItems || [], [cartData?.cartItems]);
+    const { toggleWishlist, isInWishlist } = useWishListStore();
+    const isLiked = isInWishlist(product.id);
+    const cartItem = useMemo(
+      () => cartItems.find((item: any) => item?.product?.id === product.id || item?.id === product.id),
+      [cartItems, product.id]
     );
-  }
-  const { data } = useCart();
-  const cartItems = data?.cartItems || [];
-  const { toggleWishlist, isInWishlist } = useWishListStore();
-  const isLiked = isInWishlist(product.id);
-  const quantity = cartItems.find(
-    (item: any) => item.id === product.id,
-  )?.quantity;
+    const quantity = cartItem?.quantity ?? 0;
   return (
-    <Link href={`/product/${product.id}`} asChild>
+    <Link href={`/product/${product?.id}`}  asChild>
       <TouchableOpacity className="flex flex-col p-1.5 gap-3 rounded-xl justify-between max-w-md w-full overflow-hidden bg-white shadow-xs border border-gray-100 mb-1 h-[300px]">
         <View className="rounded-xl  w-full relative ">
           <Image
@@ -132,7 +138,7 @@ const ProductCard = React.memo(({ product }: { product: Product }) => {
                 </Text>
               )}
             </View>
-            {cartItems.find((item: any) => item.product.id === product.id) ? (
+            {cartItem ? (
               <View className="flex flex-row justify-between items-center   gap-2">
                 <TouchableOpacity
                   disabled={(quantity ?? 0) <= 0}
@@ -151,11 +157,7 @@ const ProductCard = React.memo(({ product }: { product: Product }) => {
                   />
                 </TouchableOpacity>
                 <Text className="text-zinc-700  font-bold text-[14px] ">
-                  {
-                    cartItems.find(
-                      (item: any) => item.product.id === product.id,
-                    )?.quantity
-                  }
+                  {quantity}
                 </Text>
                 <TouchableOpacity
                   disabled={product.stock < (quantity ?? 0)}
@@ -169,14 +171,6 @@ const ProductCard = React.memo(({ product }: { product: Product }) => {
                     color={"#ffff"}
                   />
                 </TouchableOpacity>
-                {/* <TouchableOpacity className="bg-primary p-1 rounded-full">
-                  <Ionicons
-                    name="trash"
-                    size={16}
-                    className="transition-transform duration-200 hover:rotate-12"
-                    color={COLORS.accent}
-                  />
-                </TouchableOpacity> */}
               </View>
             ) : (
               <TouchableOpacity
@@ -223,7 +217,14 @@ const ProductCard = React.memo(({ product }: { product: Product }) => {
       </TouchableOpacity>
     </Link>
   );
-});
+  },
+  (prevProps, nextProps) => {
+    return (
+      prevProps.product.id === nextProps.product.id &&
+      prevProps.cartData === nextProps.cartData
+    );
+  }
+);
 
 ProductCard.displayName = "ProductCard";
 export default ProductCard;

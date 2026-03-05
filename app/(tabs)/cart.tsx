@@ -9,11 +9,10 @@ import CartItemCard from "@/components/cartItemCard";
 import { useCart } from "@/hooks/useCart";
 export default function Cart() {
   const router = useRouter();
-  const { data } = useCart();
+  const { data, isLoading } = useCart();
   const cartItems = data?.cartItems || [];
   const totalItems = cartItems.length;
   const totalPrice = data?.totalPrice || 0;
-  const isLoading = data?.isLoading || false;
   const shipping = 10;
   const tax = 5;
   const total = useMemo(() => {
@@ -24,7 +23,7 @@ export default function Cart() {
       <Header title="Cart" showBack showSearch />
       {isLoading ? (
         <ActivityIndicator size="large" color={COLORS.primary} />
-      ) : cartItems.length < 0 ? (
+      ) : totalItems < 0 ? (
         <View className="flex-1">
           <Text className="text-2xl font-bold text-center text-gray-900">
             Cart is Empty

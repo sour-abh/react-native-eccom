@@ -1,5 +1,4 @@
 import instance from "@/api/base";
-import { AxiosRequestConfig } from "axios";
 
 type AuthResourceType = {
   register: (data: any) => any;

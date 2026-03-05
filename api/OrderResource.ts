@@ -42,7 +42,7 @@ const OrderResource: OrderResourceType = {
     search?: string;
     isActive?: boolean;
   }) => {
-    return instance.get("/", { params });
+    return instance.get("/orders", { params });
   },
   getOrderById: (id: string) => {
     return instance.get(`/orders/admin/${id}`);

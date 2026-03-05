@@ -18,7 +18,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import { useWishListStore } from "@/store/wishlist.store";
 import { useCart } from "@/hooks/useCart";
-import CartResource from "@/api/CartResource";
 import { useAddToCart } from "@/hooks/useAddToCart";
 import { useUpdateCartItems } from "@/hooks/useUpdateCartItems";
 export default function ProductDetail() {
@@ -64,7 +63,7 @@ export default function ProductDetail() {
 
   useEffect(() => {
     if (id) {
-      const foundProduct = cartItems.find((p: any) => p.id === id);
+      const foundProduct = dummyProducts.find((p: any) => p.id === id);
       setProduct(foundProduct ?? null);
       setLoading(false);
     }

@@ -17,7 +17,7 @@ import { CATEGORIES, COLORS } from "@/assets/constants";
 import CategoriesItem from "@/components/Categories-item";
 import { Product } from "@/assets/constants/types";
 import ProductCard from "@/components/Products-item";
-import { TapGestureHandler } from "react-native-gesture-handler";
+import { useCart } from "@/hooks/useCart";
 
 export default function Home() {
   const { width } = useWindowDimensions();
@@ -27,6 +27,9 @@ export default function Home() {
   const Categories = [{ id: "all", name: "All", icon: "grid" }, ...CATEGORIES];
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Fetch cart data once at parent level
+  const { data: cartData } = useCart();
 
   const fetchProducts = async () => {
     setProducts(dummyProducts);
@@ -164,7 +167,7 @@ export default function Home() {
                 .filter((product) => product.isFeatured === true)
                 .map((product, index) => (
                   <View key={index} className="w-[49%] ">
-                    <ProductCard product={product} />
+                    <ProductCard product={product} cartData={cartData} />
                   </View>
                 ))}
             </View>

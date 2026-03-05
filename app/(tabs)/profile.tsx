@@ -1,14 +1,17 @@
 import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
 import React from "react";
-import { dummyUser } from "@/assets/assets";
 import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "@/components/Header";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS, PROFILE_MENU } from "@/assets/constants";
+import { useAuthStore } from "@/store/auth.store";
 
 export default function Profile() {
-  const user = dummyUser;
+  const state=useAuthStore.getState()
+  console.log(state)
+
+  const user =state.user ;
   const router = useRouter();
 
   return (
@@ -41,14 +44,24 @@ export default function Profile() {
               <Text className="text-gray-600 mb-6">
                 Sign in to enjoy exclusive benefits
               </Text>
+              <View className="flex-row gap-2 items-center">
               <TouchableOpacity
                 onPress={() => {
-                  router.push("/login");
+                  router.push("/auth/login");
+                }}
+                className="bg-primary px-6 py-3 rounded-full"
+              >
+                <Text className="text-white font-bold">Log In</Text>
+              </TouchableOpacity>
+                            <TouchableOpacity
+                onPress={() => {
+                  router.push("/auth/signin");
                 }}
                 className="bg-secondary px-6 py-3 rounded-full"
               >
-                <Text className="text-white font-bold">Sign In</Text>
+                <Text className="text-white font-bold">Sign Up</Text>
               </TouchableOpacity>
+              </View>
             </View>
           ) : (
             <View className="flex-1 items-center justify-center my-8 w-full">
@@ -64,7 +77,7 @@ export default function Profile() {
                   {user.firstName + " " + user.lastName}
                 </Text>
                 <Text className="text-gray-600 mb-6">{user.email}</Text>
-                {user.publicMetadata?.role === "ADMIN" && (
+                {user?.role === "ADMIN" && (
                   <TouchableOpacity
                     onPress={() => {
                       router.push("/admin");
@@ -79,7 +92,7 @@ export default function Profile() {
               <View className="w-full mt-4">
                 {PROFILE_MENU.map((item) => {
                   return (
-                    <>
+                    
                       <TouchableOpacity
                         key={item.id}
                         onPress={() => router.push(item.route as any)}
@@ -103,7 +116,7 @@ export default function Profile() {
                           color={COLORS.secondary}
                         />
                       </TouchableOpacity>
-                    </>
+                    
                   );
                 })}
               </View>
