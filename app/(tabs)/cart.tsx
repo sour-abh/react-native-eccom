@@ -23,7 +23,7 @@ export default function Cart() {
       <Header title="Cart" showBack showSearch />
       {isLoading ? (
         <ActivityIndicator size="large" color={COLORS.primary} />
-      ) : totalItems < 0 ? (
+      ) : totalItems === 0 ? (
         <View className="flex-1">
           <Text className="text-2xl font-bold text-center text-gray-900">
             Cart is Empty

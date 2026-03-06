@@ -1,6 +1,6 @@
 import { create } from "zustand";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { persist } from "zustand/middleware";
+import * as SecureStore from "expo-secure-store"
+import { createJSONStorage,persist } from "zustand/middleware";
 
 interface AuthState {
   user: any;
@@ -28,15 +28,13 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: "auth-storage",
-      storage: {
-        getItem: async (name) => {
-          const value = await AsyncStorage.getItem(name);
-          return value ? JSON.parse(value) : null;
-        },
-        setItem: async (name, value) =>
-          AsyncStorage.setItem(name, JSON.stringify(value)),
-        removeItem: async (name) => AsyncStorage.removeItem(name),
-      },
+      storage: createJSONStorage(()=>({
+        getItem:(name)=>SecureStore.getItemAsync(name),
+        setItem:(name,value)=>SecureStore.setItemAsync(name,value),
+
+      removeItem:(name)=>SecureStore.deleteItemAsync(name),
+      })),
+
       onRehydrateStorage: () => (state) => {
         if (state) {
           state.setIsHydrated(true);

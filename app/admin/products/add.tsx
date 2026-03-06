@@ -21,7 +21,9 @@ interface CategoryInterface{
 }
 export default function AddProduct() {
 
-    const {user}=useAuthStore.getState()
+    const user=useAuthStore((state)=>state.user)
+    const isHydrated=useAuthStore((state)=>state.isHydrated)
+
 
     const [submitting, setSubmitting] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
@@ -81,7 +83,11 @@ export default function AddProduct() {
         setSubmitting(true)
         try{
             
-        if (!name || !price || !categoryId || sizes.length < 1) {
+    
+          const sizeArray = sizes.split(',').map((s) => s.trim()).filter((s) => s.length > 0);
+          const parsedStock=Number(stock)
+          const parsedPrice=Number(price)
+          if(!name.trim() || !sku.trim() || !categoryId || !stock.trim()|| sizeArray.length===0 || !Number.isFinite(parsedPrice)|| parsedPrice<=0|| !Number.isFinite(parsedStock) || parsedStock<0){
             Toast.show({
                 type: 'error',
                 text1: 'Missing Fields',
@@ -91,13 +97,13 @@ export default function AddProduct() {
             return;
         }
         
-        const sizeArray = sizes.split(',').map((s) => s.trim()).filter((s) => s.length > 0);
+        
         
         const res = await ProductResource.createProducts({
             name,
             description,
-            price: Number(price),
-            stock: Number(stock),
+            price: parsedPrice,
+            stock: parsedStock,
             categoryId,
             sizes: sizeArray,
             isFeatured,
@@ -136,7 +142,10 @@ export default function AddProduct() {
         }
 
     };
-        if(user.role!=='ADMIN'){
+        if(!isHydrated){
+      return (<SafeAreaView className="flex-1 bg-surface justify-center items-center"> <ActivityIndicator size={"large"} color={COLORS.primary}/> </SafeAreaView>)
+    }
+        if(!user||user.role!=='ADMIN'){
     return(<SafeAreaView className="flex-1 bg-surface items-center">
         <View className="flex-1 items-center justify-center">
             <Text className="text-3xl text-bold text-gray-800">

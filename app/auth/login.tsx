@@ -1,6 +1,6 @@
 import AuthResource from "@/api/AuthResource";
 import { useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import Toast from "react-native-toast-message";
 import { useAuthStore } from "@/store/auth.store";
@@ -11,6 +11,7 @@ const Login = () => {
   const router= useRouter()
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [isLoading,setIsLoading]=useState(false)
   const { setTokens,setUser } = useAuthStore();
   const [error, setError] = useState<{ email: string; password: string }>({
     email: "",
@@ -18,6 +19,7 @@ const Login = () => {
   });
 
   const handleLogin = async () => {
+    setIsLoading(true)
     try {
       const res = await AuthResource.login({
         email: email,
@@ -28,6 +30,7 @@ const Login = () => {
         
         setUser(user)
         setTokens(accessToken, refreshToken);
+        setIsLoading(false)
         Toast.show({
           type: "success",
           text1: "Login Success",
@@ -35,12 +38,14 @@ const Login = () => {
         });
         router.push('/')
       }
-    } catch (err) {
-      setError({ email:"",password: `${err}`});
+    } catch (err:any) {
+      const message=err?.response?.data?.message || "invalid email or password"
+      setIsLoading(false)
+      setError({ email:"",password: message});
       Toast.show({
         type: "error",
         text1: "Login Failed",
-        text2: `${err}`,
+        text2: message,
       });
     }
   };
@@ -69,7 +74,7 @@ const Login = () => {
           <Text className="text-red-500">{error.password}</Text>
         )}
       </View>
-      <TouchableOpacity onPress={handleLogin} className="w-full rounded-xl bg-gray-800  py-3 mt-5 " ><Text className="text-white text-xl text-center">Login</Text></TouchableOpacity>
+      <TouchableOpacity onPress={handleLogin} disabled={isLoading} className="w-full rounded-xl bg-gray-800  py-3 mt-5 disabled:bg-gray-500  disabled:cursor-not-allowed" >{isLoading?<ActivityIndicator size={"small"}/>:<Text className="text-white text-xl text-center">Log In</Text>}</TouchableOpacity>
     </View>
         <View className="justify-center flex-row gap-1 mt-5 items-center"> <Text className="text-sm text-secondary">Don&apos;t  have an account ? </Text><TouchableOpacity onPress={()=>router.push("/auth/signin")}><Text className="text-sm font-semibold mx-1">Register</Text></TouchableOpacity></View>
     </SafeAreaView>

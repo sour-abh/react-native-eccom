@@ -3,7 +3,7 @@ import Header from "@/components/Header";
 import { useAuthStore } from "@/store/auth.store";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 
@@ -12,6 +12,7 @@ const Register = () => {
   const  {setUser,setTokens}=useAuthStore()
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [isLoading,setIsLoading]=useState(false)
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
   const [error, setError] = useState<{ email: string; password: string }>({
@@ -32,6 +33,7 @@ const Register = () => {
       });
       return;
     }
+    setIsLoading(true)
     try {
       const res = await AuthResource.register({
         email: email,
@@ -43,6 +45,7 @@ const Register = () => {
         const {accessToken,refreshToken,user}=res.data
         setUser(user)
         setTokens(accessToken,refreshToken)
+        setIsLoading(false)
         Toast.show({
           type: "success",
           text1: "Registeration Success",
@@ -50,12 +53,15 @@ const Register = () => {
         });
         router.push('/')
       }
-    } catch (err) {
-      setError({email:`${err}`,password:`${err}`})
+    } catch (err :any) {
+      const message=err?.response?.data?.message || 'Email or Password Not Valid'
+      setError({email:``,password:message})
+
+      setIsLoading(false)
       Toast.show({
         type: "error",
         text1: "Register Failed",
-        text2: `${err}`,
+        text2: message,
       });
     }
   };
@@ -95,7 +101,7 @@ const Register = () => {
           <Text className="text-red-500">{error.password}</Text>
         )}
       </View>
-      <TouchableOpacity onPress={handleRegister} className="w-full rounded-xl bg-gray-800  py-3 mt-5 " ><Text className="text-white text-xl text-center">Register</Text></TouchableOpacity>
+      <TouchableOpacity onPress={handleRegister} disabled={isLoading} className="w-full rounded-xl bg-gray-800  py-3 mt-5 disabled:bg-gray-500  disabled:cursor-not-allowed" >{isLoading?<ActivityIndicator size={"small"}/>:<Text className="text-white text-xl text-center">Register</Text>}</TouchableOpacity>
     </View>
     <View className="justify-center flex-row gap-1 mt-5 items-center"> <Text className="text-sm text-secondary">Already have an account ? </Text><TouchableOpacity onPress={()=>router.push("/auth/login")}><Text className="text-base font-semibold mx-1">Login</Text></TouchableOpacity></View>
     </SafeAreaView>

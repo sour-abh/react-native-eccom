@@ -220,7 +220,7 @@ const ProductCard = React.memo(
   },
   (prevProps, nextProps) => {
     return (
-      prevProps.product.id === nextProps.product.id &&
+      prevProps.product === nextProps.product &&
       prevProps.cartData === nextProps.cartData
     );
   }

@@ -8,10 +8,8 @@ import { COLORS, PROFILE_MENU } from "@/assets/constants";
 import { useAuthStore } from "@/store/auth.store";
 
 export default function Profile() {
-  const state=useAuthStore.getState()
-  console.log(state)
 
-  const user =state.user ;
+  const user =useAuthStore((state)=>state.user)
   const router = useRouter();
 
   return (

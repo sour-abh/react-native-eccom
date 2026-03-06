@@ -3,11 +3,12 @@ import React from "react";
 import { Tabs } from "expo-router";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { COLORS } from "@/assets/constants";
+import { useCart } from "@/hooks/useCart";
 
 export default function TabLayout() {
 
-  // const { data } = useCart();
-  const cartItems = [];
+  const {data}  = useCart();
+  const cartItems = data?.cartItems || [];
   return (
     <Tabs
       screenOptions={{
