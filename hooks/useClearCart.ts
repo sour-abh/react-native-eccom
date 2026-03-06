@@ -1,20 +1,34 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import CartResource from "@/api/CartResource";
+import { useAuthStore } from "@/store/auth.store";
+import Toast from "react-native-toast-message";
 
 export const useClearCart = () => {
+  const { accessToken } = useAuthStore();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: () => CartResource.deleteCart(),
+    mutationFn: async () => {
+      if (!accessToken) {
+        Toast.show({
+          type: "error",
+          text1: "Not Authenticated",
+          text2: "Please login to clear cart",
+        });
+        throw new Error("User not authenticated");
+      }
+      return CartResource.deleteCart();
+    },
 
-    onMutate: async (newItem) => {
+    onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ["cart"] });
 
       const previous = queryClient.getQueryData(["cart"]);
 
       queryClient.setQueryData(["cart"], (old: any) => ({
         ...old,
-        items: [...old.items, newItem],
+        cartItems: [],
+        totalPrice: 0,
       }));
 
       return { previous };
