@@ -7,15 +7,18 @@ import WishlistCard from "@/components/wishlist-card";
 import { Product } from "@/assets/constants/types";
 import { useWishListStore } from "@/store/wishlist.store";
 export default function Favourite() {
-  const { wishList } = useWishListStore.getState();
+  const wishList = useWishListStore((state)=>state.wishList);
+  
+  // Filter out undefined or invalid items
+  const validWishList = wishList?.filter((item) => item && item.id) || [];
 
   return (
     <SafeAreaView className="flex-1 bg-surface" edges={["top"]}>
       <Header title="WishList" showMenu showCart />
-      {wishList && wishList.length > 0 ? (
+      {validWishList && validWishList.length > 0 ? (
         <ScrollView showsVerticalScrollIndicator={false} className="gap-2">
           <View className="mt-4 gap-2">
-            {wishList.map((item: Product) => (
+            {validWishList.map((item: Product) => (
               <WishlistCard key={item.id} {...item} />
             ))}
           </View>

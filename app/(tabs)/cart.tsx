@@ -10,7 +10,7 @@ import { useCart } from "@/hooks/useCart";
 export default function Cart() {
   const router = useRouter();
   const { data, isLoading } = useCart();
-  const cartItems = data?.cartItems || [];
+  const cartItems = (data?.cartItems || []).filter((item: any) => item && item.product && item.product.id) || [];
   const totalItems = cartItems.length;
   const totalPrice = data?.totalPrice || 0;
   const shipping = 10;

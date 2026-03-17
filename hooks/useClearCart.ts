@@ -21,9 +21,12 @@ export const useClearCart = () => {
     },
 
     onMutate: async () => {
+      const previous = queryClient.getQueryData(["cart"]);
+      if(!accessToken){
+        return{previous}
+      }
       await queryClient.cancelQueries({ queryKey: ["cart"] });
 
-      const previous = queryClient.getQueryData(["cart"]);
 
       queryClient.setQueryData(["cart"], (old: any) => ({
         ...old,

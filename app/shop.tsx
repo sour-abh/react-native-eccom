@@ -1,59 +1,22 @@
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
-import { useEffect, useState } from "react";
-import { Product } from "@/assets/constants/types";
-import { dummyProducts } from "@/assets/assets";
+// import {  useState } from "react";
+// import { Product } from "@/assets/constants/types";
+// import { dummyProducts } from "@/assets/assets";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "@/components/Header";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "@/assets/constants";
 import { FlatList, TextInput } from "react-native-gesture-handler";
 import ProductCard from "@/components/Products-item";
+import { useProducts } from "@/hooks/useProducts";
 
 export default function Shop() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(false);
 
-  const fetchProducts = async (pageNumber = 1) => {
-    if (pageNumber === 1) {
-      setLoading(true);
-    } else {
-      setLoadingMore(true);
-    }
-    try {
-      const start = (pageNumber - 1) * 10;
-      const end = start + 10;
-      const data = dummyProducts.slice(start, end);
-      if (data.length > 0) {
-        if (pageNumber === 1) {
-          setProducts(data);
-          setLoading(false);
-        } else {
-          setProducts((prev) => [...prev, ...data]);
-          setLoadingMore(false);
-        }
-        setHasMore(end < dummyProducts.length);
-        setPage(pageNumber);
-        setLoadingMore(false);
-      } else {
-        setHasMore(false);
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-      setLoadingMore(false);
-    }
-  };
-  useEffect(() => {
-    fetchProducts();
-  }, []);
+  const {data,isLoading,fetchNextPage,hasNextPage,isFetchingNextPage}=useProducts({limit:10})
 
   const loadMore = () => {
-    if (!loadingMore && !loading && hasMore) {
-      fetchProducts(page + 1);
+    if (!isLoading && !isFetchingNextPage && hasNextPage) {
+      fetchNextPage()
     }
   };
   return (
@@ -86,14 +49,14 @@ export default function Shop() {
         </TouchableOpacity>
       </View>
 
-      {loading ? (
+      {isLoading ? (
         <View className="flex-1 justify-center items-center">
           <ActivityIndicator size="large" color={COLORS.secondary} />
         </View>
       ) : (
         <FlatList
           horizontal={false}
-          data={products}
+          data={data?.flattenedData || []}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
             <View className="w-1/2">
@@ -107,14 +70,14 @@ export default function Shop() {
           onEndReached={loadMore}
           onEndReachedThreshold={0.5}
           ListFooterComponent={
-            loadingMore ? (
+            isFetchingNextPage ? (
               <View className="flex-1 justify-center items-center">
                 <ActivityIndicator size="large" color={COLORS.secondary} />
               </View>
             ) : null
           }
           ListEmptyComponent={
-            !loading && (
+            !isLoading && (
               <View>
                 <Text>No products found</Text>
               </View>
