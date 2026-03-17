@@ -1,22 +1,21 @@
 import { useQuery } from "@tanstack/react-query";
-import instance from "../api/base";
 import { useAuthStore } from "@/store/auth.store";
+import ProductResource from "@/api/ProductResource";
 
-export const useCart = () => {
+export const GetProductById = (id:string) => {
   const state = useAuthStore();
-  const accessToken = state.accessToken;
   const isHydrated = state.isHydrated;
   
   return useQuery({
-    queryKey: ["cart"],
+    queryKey: ["cart",{id}],
     queryFn: async () => {
-      const { data } = await instance.get("/cart");
+      const { data } = await ProductResource.getProductById(id);
       return data;
     },
-    enabled: !!accessToken && isHydrated,
+    enabled:  isHydrated,
     staleTime: 1000 * 60 * 5,
     retry: 1,
     refetchOnWindowFocus: false,
-    placeholderData: { cartItems: [], totalPrice: 0 },
+    
   });
 };

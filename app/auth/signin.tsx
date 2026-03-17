@@ -45,12 +45,13 @@ const Register = () => {
         const {accessToken,refreshToken,user}=res.data
         setUser(user)
         setTokens(accessToken,refreshToken)
-        setIsLoading(false)
         Toast.show({
           type: "success",
           text1: "Registeration Success",
           text2: "You have successfully logged in",
         });
+        setIsLoading(false)
+
         router.push('/')
       }
     } catch (err :any) {
@@ -101,7 +102,7 @@ const Register = () => {
           <Text className="text-red-500">{error.password}</Text>
         )}
       </View>
-      <TouchableOpacity onPress={handleRegister} disabled={isLoading} className="w-full rounded-xl bg-gray-800  py-3 mt-5 disabled:bg-gray-500  disabled:cursor-not-allowed" >{isLoading?<ActivityIndicator size={"small"}/>:<Text className="text-white text-xl text-center">Register</Text>}</TouchableOpacity>
+      <TouchableOpacity onPress={handleRegister} disabled={isLoading} className="w-full rounded-xl bg-gray-800  py-3 mt-5 disabled:bg-gray-500  disabled:cursor-not-allowed" >{isLoading?<ActivityIndicator size={"small"} color={'#ffffff'}/>:<Text className="text-white text-xl text-center">Register</Text>}</TouchableOpacity>
     </View>
     <View className="justify-center flex-row gap-1 mt-5 items-center"> <Text className="text-sm text-secondary">Already have an account ? </Text><TouchableOpacity onPress={()=>router.push("/auth/login")}><Text className="text-base font-semibold mx-1">Login</Text></TouchableOpacity></View>
     </SafeAreaView>

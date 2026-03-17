@@ -3,7 +3,6 @@ import {
   Image,
   Text,
   TouchableOpacity,
-  useWindowDimensions,
   View,
 } from "react-native";
 import { Link } from "expo-router";
@@ -15,14 +14,19 @@ import Toast from "react-native-toast-message";
 import { useAddToCart } from "@/hooks/useAddToCart";
 
 const WishlistCard = (item: Product) => {
-  const width = useWindowDimensions().width;
+  // Return null if item is undefined
+
+  
   const { isInWishlist, toggleWishlist } = useWishListStore();
   const { data } = useCart();
   const cartItems = data?.cartItems || [];
   const isLiked = isInWishlist(item.id);
   const { mutateAsync: addToCart } = useAddToCart();
+    if (!item || !item.id) {
+    return null;
+  }
   const handleAddtoCart = async (product: Product) => {
-    const response = await addToCart(product);
+    const response = await addToCart({productId:item.id,quantity:1,size:""});
     if (response) {
       Toast.show({
         type: "success",
@@ -72,7 +76,7 @@ const WishlistCard = (item: Product) => {
         <TouchableOpacity className="bg-gray-300 backdrop-blur-3xl text-white rounded-xl flex flex-row items-center justify-between py-2 px-2">
           <View className="flex flex-row items-center gap-2">
             <Image
-              source={{ uri: item.images[0] }}
+              source={{ uri: item.imageUrl?.[0] || "https://via.placeholder.com/80" }}
               className="object-cover object-center w-20 h-20 rounded-lg hover:shadow-md transition-shadow duration-200"
               resizeMode="contain"
             />

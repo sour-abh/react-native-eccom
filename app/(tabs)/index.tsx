@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "@/components/Header";
 import {
@@ -7,10 +7,9 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Image,useWindowDimensions
 } from "react-native";
-import { BANNERS, dummyProducts } from "@/assets/assets";
-import { Image } from "react-native";
-import { useWindowDimensions } from "react-native";
+import { BANNERS } from "@/assets/assets";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { CATEGORIES, COLORS } from "@/assets/constants";
@@ -18,6 +17,7 @@ import CategoriesItem from "@/components/Categories-item";
 import { Product } from "@/assets/constants/types";
 import ProductCard from "@/components/Products-item";
 import { useCart } from "@/hooks/useCart";
+import { useProducts } from "@/hooks/useProducts";
 
 export default function Home() {
   const { width } = useWindowDimensions();
@@ -25,19 +25,11 @@ export default function Home() {
   const router = useRouter();
   const [activeBanner, setActiveBanner] = useState(0);
   const Categories = [{ id: "all", name: "All", icon: "grid" }, ...CATEGORIES];
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  // Fetch cart data once at parent level
   const { data: cartData } = useCart();
-
-  const fetchProducts = async () => {
-    setProducts(dummyProducts);
-    setLoading(false);
-  };
-  useEffect(() => {
-    fetchProducts();
-  }, []);
+  const {data,isLoading}=  useProducts({limit:4})
+  const products=data&&data.flattenedData ||[]
+  
   return (
     <SafeAreaView className="flex-1" edges={["top"]}>
       <Header title="Forever" showLogo showSearch showCart showMenu />
@@ -155,17 +147,22 @@ export default function Home() {
               <Ionicons name="arrow-forward" size={16} color={COLORS.primary} />
             </TouchableOpacity>
           </View>
-          {loading ? (
+
+          {isLoading ? (
             <ActivityIndicator
               size="large"
               color={COLORS.primary}
               className="mt-20 justify-center flex items-center "
             />
-          ) : (
+          ):products.length===0 ?(
+            <View className=" w-full  flex-1  flex-row justify-center items-center">
+              <Text className="text-xl leading-10 font-bold text-gray-500">No Products to show </Text>
+            </View>
+
+          ): (
             <View className=" w-full  flex flex-wrap flex-row justify-between gap-2">
               {products
-                .filter((product) => product.isFeatured === true)
-                .map((product, index) => (
+                .map((product:Product, index:number) => (
                   <View key={index} className="w-[49%] ">
                     <ProductCard product={product} cartData={cartData} />
                   </View>

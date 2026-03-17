@@ -1,4 +1,3 @@
-import { CartContextItem } from "@/context/cartContext";
 import { Ionicons } from "@expo/vector-icons";
 import {
   Image,
@@ -9,16 +8,23 @@ import {
 } from "react-native";
 import { Link } from "expo-router";
 import { COLORS } from "@/assets/constants";
+import { CartItem } from "@/assets/constants/types";
 
-const CartItemCard = (item: CartContextItem) => {
+const CartItemCard = (item:CartItem) => {
   const width = useWindowDimensions().width;
+  
+  // Return null if item or required properties are missing
+  if (!item || !item.product || !item.product.id) {
+    return null;
+  }
+  
   return (
     <View className="px-2">
       <Link href={`/product/${item.product.id}`} asChild>
         <TouchableOpacity className="border-b-2 border-b-stone-400  py-4  transition-colors duration-200 rounded-lg w-full px-4">
           <View className="flex flex-row gap-2 justify-between items-center w-full">
             <Image
-              source={{ uri: item.product.images[0] }}
+              source={{ uri: item.product.imageUrl?.[0] || "https://via.placeholder.com/80" }}
               className="object-cover object-center w-20 h-20 rounded-lg hover:shadow-md transition-shadow duration-200"
             />
             <View className="flex flex-col gap-2  items-start justify-between w-full">
@@ -35,7 +41,7 @@ const CartItemCard = (item: CartContextItem) => {
                 style={{ width: width - 120 }}
               >
                 <Text className="text-zinc-700  font-bold text-xl leading-tight">
-                  ${item.price.toFixed(2)}
+                  ${item.product.price.toFixed(2)}
                 </Text>
 
                 <View className="flex flex-row justify-between items-center gap-4">

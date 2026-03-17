@@ -24,7 +24,7 @@ export interface Product {
   description?: string;
   price: number;
   comparePrice?: number;
-  images: string[];
+  imageUrl: string[];
   sizes?: string[];
   category:
     | {
@@ -38,7 +38,7 @@ export interface Product {
       }
     | string;
   stock: number;
-  ratings: number;
+  rating: number;
   isFeatured: boolean;
   isActive: boolean;
   createdAt?: string;

@@ -22,7 +22,7 @@ const Login = () => {
     setIsLoading(true)
     try {
       const res = await AuthResource.login({
-        email: email,
+        email: email.toLowerCase().trim(),
         password: password,
       });
       if (res.status === 200 || res.status === 201) {
@@ -30,12 +30,13 @@ const Login = () => {
         
         setUser(user)
         setTokens(accessToken, refreshToken);
-        setIsLoading(false)
+
         Toast.show({
           type: "success",
           text1: "Login Success",
           text2: "You have successfully logged in",
         });
+                setIsLoading(false)
         router.push('/')
       }
     } catch (err:any) {
@@ -74,7 +75,7 @@ const Login = () => {
           <Text className="text-red-500">{error.password}</Text>
         )}
       </View>
-      <TouchableOpacity onPress={handleLogin} disabled={isLoading} className="w-full rounded-xl bg-gray-800  py-3 mt-5 disabled:bg-gray-500  disabled:cursor-not-allowed" >{isLoading?<ActivityIndicator size={"small"}/>:<Text className="text-white text-xl text-center">Log In</Text>}</TouchableOpacity>
+      <TouchableOpacity onPress={handleLogin} disabled={isLoading} className="w-full rounded-xl bg-gray-800  py-3 mt-5 disabled:bg-gray-500  disabled:cursor-not-allowed" >{isLoading?<ActivityIndicator size={"small"} color={'#ffffff'}/>:<Text className="text-white text-xl text-center">Log In</Text>}</TouchableOpacity>
     </View>
         <View className="justify-center flex-row gap-1 mt-5 items-center"> <Text className="text-sm text-secondary">Don&apos;t  have an account ? </Text><TouchableOpacity onPress={()=>router.push("/auth/signin")}><Text className="text-sm font-semibold mx-1">Register</Text></TouchableOpacity></View>
     </SafeAreaView>

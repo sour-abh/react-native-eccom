@@ -2,10 +2,10 @@ import { COLORS } from "@/assets/constants";
 import {  Product } from "@/assets/constants/types";
 import { useAddToCart } from "@/hooks/useAddToCart";
 import { useUpdateCartItems } from "@/hooks/useUpdateCartItems";
+import { useAuthStore } from "@/store/auth.store";
 import { useWishListStore } from "@/store/wishlist.store";
-
 import { Ionicons } from "@expo/vector-icons";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import React, { useMemo } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import Toast from "react-native-toast-message";
@@ -13,20 +13,26 @@ import Toast from "react-native-toast-message";
 interface ProductCardProps {
   product: Product;
   cartData?: any;
+  
 }
 
 const ProductCard = React.memo(
   ({ product, cartData }: ProductCardProps) => {
+    const router=useRouter()
     let stockLabel = "In Stock";
     let discount = 0;
+    const user=useAuthStore((state)=>state.user)
     const { mutateAsync: addToCart } = useAddToCart();
     const { mutateAsync: updateCartItems } = useUpdateCartItems();
     const handleAddtoCart = async (product: Product) => {
+      if(!user){
+        return router.push('/auth/login')
+      }
       const response = await addToCart(product);
       if (response) {
         Toast.show({
           type: "success",
-          text1: "Added to Cart",
+          text1: "Item Added to Cart",
         });
       }
     };
@@ -62,7 +68,7 @@ const ProductCard = React.memo(
       <TouchableOpacity className="flex flex-col p-1.5 gap-3 rounded-xl justify-between max-w-md w-full overflow-hidden bg-white shadow-xs border border-gray-100 mb-1 h-[300px]">
         <View className="rounded-xl  w-full relative ">
           <Image
-            source={{ uri: product.images[0] }}
+            source={{ uri: product.imageUrl[0] }}
             className="h-40 w-full object-cover object-center rounded-xl bg-gray-100"
           />
           {product.isFeatured ? (
@@ -116,7 +122,7 @@ const ProductCard = React.memo(
           <View className="flex-row items-center gap-1 mb-2">
             <Ionicons name="star" size={12} color="#FBBF24" />
             <Text className="text-xs font-bold text-gray-700">
-              {product.ratings.toFixed(2)}
+              {product.rating.toFixed(2)}
             </Text>
           </View>
 
@@ -177,13 +183,7 @@ const ProductCard = React.memo(
                 disabled={product.stock === 0}
                 onPress={() => {
                   handleAddtoCart(product);
-                  if (product) {
-                    Toast.show({
-                      type: "success",
-                      text1: "cart Updated",
-                      text2: "Added to cart",
-                    });
-                  }
+
                 }}
                 className="bg-primary p-2 rounded-full"
               >

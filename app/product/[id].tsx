@@ -8,9 +8,9 @@ import {
   StyleSheet,
   useWindowDimensions,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { dummyProducts } from "@/assets/assets";
+// import { dummyProducts } from "@/assets/assets";
 import { Product } from "@/assets/constants/types";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { COLORS } from "@/assets/constants";
@@ -20,12 +20,15 @@ import { useWishListStore } from "@/store/wishlist.store";
 import { useCart } from "@/hooks/useCart";
 import { useAddToCart } from "@/hooks/useAddToCart";
 import { useUpdateCartItems } from "@/hooks/useUpdateCartItems";
+// import { useProducts } from "@/hooks/useProducts";
+import { GetProductById } from "@/hooks/getProductById";
+import { useAuthStore } from "@/store/auth.store";
 export default function ProductDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const [product, setProduct] = useState<Product | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  // const [product, setProduct] = useState<Product | null>(null);
+  // const [loading, setLoading] = useState(true);
+  const [selectedSize, setSelectedSize] = useState<string | null>("S");
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const width = useWindowDimensions().width;
   const { isInWishlist, toggleWishlist } = useWishListStore.getState();
@@ -36,20 +39,40 @@ export default function ProductDetail() {
   const { data } = useCart();
   const cartItems = data?.cartItems || [];
   const totalItems = cartItems?.totalItems || "0";
-
+  const {data:product,isLoading}=GetProductById(id)
+  
   const { mutateAsync: addToCart } = useAddToCart();
   const { mutateAsync: updateCartItems } = useUpdateCartItems();
+  const user=useAuthStore((state)=>state.user)
+
   const handleAddtoCart = async (product: Product) => {
-    const response = await addToCart(product);
-    if (response) {
+    if(!user){
+      Toast.show({
+        type:'error',
+        text1:'User not authenticated',
+        text2:'Login to access it'
+      })
+      router.push('/auth/login')}
+    try{
+    const response = await addToCart({productId:id,quantity:1,size:selectedSize});
+    if (response.status===201|| response.status===200) {
       Toast.show({
         type: "success",
         text1: "Added to Cart",
       });
     }
+  }
+  catch(error:any){
+    Toast.show({
+      type:'error',
+      text1:'Error in Adding to cart',
+      text2:`${error?.response?.message|| error?.message|| error}`
+    })
+  }
   };
-  const handleUpdateCartItems = async (id: string, item: any) => {
-    const response = await updateCartItems({ id, item });
+
+  const handleUpdateCartItems = async (id: string, item:any) => {
+    const response = await updateCartItems({ id,item});
     if (response) {
       Toast.show({
         type: "success",
@@ -57,19 +80,13 @@ export default function ProductDetail() {
       });
     }
   };
-  const quantity = cartItems.find(
-    (item: any) => item.product.id === product?.id,
-  )?.quantity;
 
-  useEffect(() => {
-    if (id) {
-      const foundProduct = dummyProducts.find((p: any) => p.id === id);
-      setProduct(foundProduct ?? null);
-      setLoading(false);
-    }
-  }, [id]);
+  const quantity = cartItems?.length!==0?cartItems.find(
+    (item: any) => item.product.id === id,
+  )?.quantity:0;
 
-  if (loading) {
+        
+  if (isLoading) {
     return (
       <SafeAreaView style={styles.centerContainer}>
         <ActivityIndicator size="large" color={COLORS.primary} />
@@ -110,7 +127,7 @@ export default function ProductDetail() {
             }
           }}
         >
-          {product?.images.map((image, index) => (
+          {product?.imageUrl.map((image:string, index:number) => (
             <Image
               key={index}
               source={{ uri: image }}
@@ -122,7 +139,7 @@ export default function ProductDetail() {
         </ScrollView>
         <View className=" absolute left-0 bottom-[60px] w-full">
           <View className="flex-row justify-center w-full">
-            {product.images.map((_, index) => (
+            {product.imageUrl.map((_:any, index:number) => (
               <View
                 key={index}
                 className={` h-3 rounded-full mx-1 transition-all  duration-500 ease-in-out ${index === activeImageIndex ? "bg-zinc-700 w-6" : "bg-gray-300 w-3 "}`}
@@ -160,7 +177,7 @@ export default function ProductDetail() {
         <View className="flex-row justify-between items-center gap-2 w-full">
           <Text style={styles.price}>${product.price.toString()}</Text>
           <View className="flex-row items-center gap-1">
-            <Text>{product.ratings.toString()}</Text>
+            <Text>{product.rating.toString()}</Text>
             <Ionicons name="star" size={20} color="#FFD700" />
           </View>
         </View>
@@ -176,7 +193,7 @@ export default function ProductDetail() {
           <>
             <Text style={styles.sectionTitle}>Available Sizes</Text>
             <View style={styles.sizeContainer}>
-              {product.sizes.map((size) => (
+              {product.sizes.map((size:string) => (
                 <View key={size}>
                   <TouchableOpacity
                     key={size}
@@ -195,12 +212,12 @@ export default function ProductDetail() {
           </>
         )}
         <View className="flex-row justify-between items-center gap-2 w-full mb-5">
-          {cartItems.find((item: any) => item.product.id === product.id) ? (
+          {cartItems.find((item: any) => item.product.id === id) ? (
             <View className="flex flex-row justify-between items-center  w-[80%] gap-4">
               <TouchableOpacity
                 disabled={(quantity ?? 0) <= 0}
                 onPress={() =>
-                  handleUpdateCartItems(product.id, { quantity: quantity - 1 })
+                  handleUpdateCartItems(id, { quantity: quantity - 1 })
                 }
                 className="items-center px-3 py-3 mt-2.5  bg-gray-700  rounded-2xl shadow-lg elevation-[2] border border-gray-800 relative "
               >
@@ -213,7 +230,7 @@ export default function ProductDetail() {
               </TouchableOpacity>
               <Text className="text-zinc-700  font-bold text-[24px] ">
                 {
-                  cartItems.find((item: any) => item.product.id === product.id)
+                  cartItems.find((item: any) => item.product.id === id)
                     ?.quantity
                 }
               </Text>
